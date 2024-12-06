@@ -1,0 +1,158 @@
+<div style="position: relative; width: 400px; height: 400px; margin: 20px auto;">
+    <canvas id="wheelCanvas" width="400" height="400"></canvas>
+    <button id="spinButton" onclick="spinWheel()" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;">
+        Spin the Wheel!
+    </button>
+</div>
+<div id="scoreDisplay" style="font-size: 24px; text-align: center; margin: 20px;">Total Won: $0</div>
+
+<head>
+    <!-- Adsterra Popunder Ads Unit -->
+    <script type='text/javascript' src='//pl24109830.cpmrevenuegate.com/24/97/21/2497213155379dcbb9e297943a66da6f.js'></script>
+</head>
+
+
+<!-- Instructions Section -->
+<div id="instructions" style="text-align: center; font-size: 16px; margin: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 8px;">
+    <h3>Welcome to Spin Wheel Lottery!</h3>
+    <p>To participate in our exciting spin wheel lottery and stand a chance to win fantastic prizes, please follow these steps:</p>
+    <ul style="list-style-type: none; padding: 0;">
+        <li><strong>Spin to Win:</strong> Enjoy spinning the wheel and try your luck to win various prizes.</li>
+        <li><strong>Withdrawal Requirements:</strong> To withdraw your winnings, you must accumulate at least $1000.</li>
+        <li><strong>Payment Methods:</strong> We offer several convenient payment options for your withdrawals:</li>
+        <ul>
+            <li>PayPal</li>
+            <li>Cryptocurrency</li>
+            <li>Payoneer</li>
+        </ul>
+        <li><strong>Stay Connected:</strong> To stay updated on the latest news and promotions, be sure to:</li>
+        <ul>
+            <li>Like our Facebook page</li>
+            <li>Subscribe to our YouTube channel</li>
+        </ul>
+    </ul>
+    <p>Thank you for being part of our community. Good luck and have fun!</p>
+</div>
+
+<!-- Payment and Social Media Buttons Section -->
+<div style="text-align: center; margin: 20px;">
+    <a href="https://www.cpmrevenuegate.com/d02x036da?key=1015458528a3e38cf54dea586db2ffbc" target="_blank" style="margin: 5px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+        PayPal
+    </a>
+    <a href="https://www.cpmrevenuegate.com/d02x036da?key=1015458528a3e38cf54dea586db2ffbc" target="_blank" style="margin: 5px; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;">
+        Payoneer
+    </a>
+    <a href="https://www.cpmrevenuegate.com/d02x036da?key=1015458528a3e38cf54dea586db2ffbc" target="_blank" style="margin: 5px; padding: 10px 20px; background-color: #ffc107; color: white; text-decoration: none; border-radius: 5px;">
+        Binance
+    </a>
+    <a href="https://www.facebook.com/shamod.imalka.1/" target="_blank" style="margin: 5px; padding: 10px 20px; background-color: #3b5998; color: white; text-decoration: none; border-radius: 5px;">
+        Facebook Page
+    </a>
+    <a href="https://www.youtube.com/@shamodfirezz" target="_blank" style="margin: 5px; padding: 10px 20px; background-color: #ff0000; color: white; text-decoration: none; border-radius: 5px;">
+        YouTube
+    </a>
+</div>
+
+<style>
+canvas {
+    border: 5px solid #000;
+}
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #45a049;
+}
+button:disabled {
+    background-color: #cccccc;  /* Change button color when disabled */
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+
+// Updated prize amounts
+const prizes = ["$0", "$3", "$7", "$12", "$15", "$25"];
+const colors = ["#FF5733", "#33FF57", "#5733FF", "#F39C12", "#E74C3C", "#8E44AD"];
+let startAngle = 0;
+const spinDuration = 3000;  // Spin duration (3 seconds for super fast spinning)
+let spinCount = 0;  // Counter for the number of spins
+let totalWon = 0;  // Total score variable
+
+function drawWheel() {
+    const numSegments = prizes.length;
+    const arcSize = 2 * Math.PI / numSegments;
+
+    for (let i = 0; i < numSegments; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(200, 200);
+        ctx.arc(200, 200, 200, startAngle, startAngle + arcSize);
+        ctx.fill();
+        ctx.save();
+
+        ctx.translate(200, 200);
+        ctx.rotate(startAngle + arcSize / 2);
+        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
+        ctx.fillText(prizes[i], 100, 10);
+        ctx.restore();
+
+        startAngle += arcSize;
+    }
+}
+
+function spinWheel() {
+    const spinButton = document.getElementById("spinButton");
+    spinButton.disabled = true;  // Disable the button during spinning
+
+    const spinAngle = Math.random() * 360 + 12000;  // Significantly faster spinning
+    let start = null;
+
+    function rotate(timestamp) {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+
+        ctx.clearRect(0, 0, 400, 400);
+        startAngle += (spinAngle / spinDuration) * Math.PI / 90;  // Extremely fast rotation speed
+        drawWheel();
+
+        if (progress < spinDuration) {
+            requestAnimationFrame(rotate);
+        } else {
+            const finalSegment = Math.floor((startAngle / (2 * Math.PI)) * prizes.length) % prizes.length;
+            let wonPrize = prizes[finalSegment];
+
+            // Increment the spin count
+            spinCount++;
+
+            // Guarantee prizes based on spin count
+            if (spinCount === 3 && wonPrize === "$0") {
+                wonPrize = "$3";  // Force at least $3 after three spins
+            } else if (spinCount === 5) {
+                wonPrize = "$12";  // Guarantee $12 after five spins
+            } else if (spinCount === 10) {
+                wonPrize = "$25";  // Guarantee $25 after ten spins
+            }
+
+            // Update total score
+            totalWon += parseFloat(wonPrize.replace('$', ''));
+            document.getElementById("scoreDisplay").innerText = "Total Won: $" + totalWon;  // Update score display
+
+            alert("Congratulations! You won " + wonPrize);  // Show result in popup window
+
+            spinButton.disabled = false;  // Re-enable the button after spinning
+        }
+    }
+    requestAnimationFrame(rotate);
+}
+
+drawWheel();
+</script>
